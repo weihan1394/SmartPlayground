@@ -1,10 +1,25 @@
 # SmartPlayground
 IS4151 project
 
+## Information
 ### Architecture
 ![architecture](https://github.com/weihan1394/SmartPlayground/blob/master/docs/architecture.png)
 
-### Installation
+### Dashboard
+![dashboard](https://github.com/weihan1394/SmartPlayground/blob/master/docs/dashboard.png)
+
+### Zone 
+![zone](https://github.com/weihan1394/SmartPlayground/blob/master/docs/zone.png)
+
+### Game 1 
+![game1-fv](https://github.com/weihan1394/SmartPlayground/blob/master/docs/game1-fv.png)
+![game1-setup](https://github.com/weihan1394/SmartPlayground/blob/master/docs/game1-setup.png)
+
+### Game 2
+![game2](https://github.com/weihan1394/SmartPlayground/blob/master/docs/game2.png)
+ 
+
+## Installation (zone)
 1. Install swig
 - [https://www.dev2qa.com/how-to-install-swig-on-macos-linux-and-windows/](https://www.dev2qa.com/how-to-install-swig-on-macos-linux-and-windows/)
 
