@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Basketball</title>
+<style>
+    #colorBlock {
+        width: 100%;
+        height: 100%;
+        padding: 250px;
+        background-color: {{color}}
+    }
+</style>
+<script>
+var state = "{{state}}"
+var listenState;
+var colorInterval, scoreInterval, timeInterval, msgInterval;
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    var countdown = setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? seconds : seconds;
+
+        display.textContent = "Game Starts In " + seconds;
+
+        if (--timer < 0) {
+            display.style.display = "none"
+	    clearInterval(countdown);
+        }
+    }, 1000);
+}
+
+function getColour() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("colorBlock").style.backgroundColor = this.responseText;
+        }
+    };
+    xhttp.open("GET", "/getColour", true);
+    xhttp.send();
+}
+
+function getName() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            if(state == "start" || state == "prepare")
+                document.getElementById("name").innerHTML = "Name: " + this.responseText;
+            else if (state == "player")
+                document.getElementById("name").innerHTML = "Looking for " + this.responseText + "!";
+        }
+    };
+    xhttp.open("GET", "/getName", true);
+    xhttp.send();
+}
+
+function getScore() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("score").innerHTML = "Score: " + this.responseText;
+        }
+    };
+    xhttp.open("GET", "/getScore", true);
+    xhttp.send();
+}
+
+function getState() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            state = this.responseText;
+            console.log(state);
+            if(state == "end") {
+                
+               
+                
+            } else if(state == "start") {
+                getName();
+                startGame();
+                clearInterval(listenState);
+                clearInterval(msgInterval);
+            } else if(state == "player") {
+                getName();
+            } else if(state == "prepare") {
+                document.getElementById("msg").innerHTML = "";
+                document.getElementById("msg").style.display = "none";
+                document.querySelector('#countdown').style.display = "block";
+                getName();
+                var sec = 3,
+                    display = document.querySelector('#countdown');
+                startTimer(sec, display);
+            }
+        }
+    };
+    xhttp.open("GET", "/getState", true);
+    xhttp.send();
+}
+
+function getTime() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("time").innerHTML = this.responseText + " Seconds";
+            if(this.responseText <= 0) {
+                document.getElementById("time").innerHTML = "TIME'S UP";
+                state = "waiting"
+                endGame();
+            }
+        }
+    };
+    xhttp.open("GET", "/getTime", true);
+    xhttp.send();
+}
+
+function getMsg() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("msg").innerHTML = this.responseText;
+        }
+    };
+    xhttp.open("GET", "/getMsg", true);
+    xhttp.send();
+}
+
+
+function startGame() {
+    colorInterval = setInterval(getColour, 1000)
+    scoreInterval = setInterval(getScore, 1000)
+    timeInterval = setInterval(getTime, 1000)
+}
+
+function endGame() {
+    console.log("1")
+    clearInterval(colorInterval)
+    clearInterval(scoreInterval)
+    clearInterval(timeInterval)
+    var colorBlock = document.getElementById("colorBlock");
+    colorBlock.style.backgroundColor = "black"
+    console.log("2")
+    setTimeout(startListenState, 8000)
+}
+
+function startListenState() {
+    console.log("Abc")
+    document.getElementById("msg").style.display = "block";
+    getTime();
+    listenState = setInterval(getState, 1000);
+    msgInterval = setInterval(getMsg, 1000);
+}
+
+window.onload = function() {
+    var colorBlock = document.getElementById("colorBlock");
+    colorBlock.style.backgroundColor = "black"
+    listenState = setInterval(getState, 1000)
+    msgInterval = setInterval(getMsg, 1000)
+}
+    
+</script>
+</head>
+<body>
+<h1 id="msg"></h1>
+<h1 id="countdown"></h1>
+<h1 id="name">Name: {{name}}</h1>
+<h1 id="score">Score: {{score}}</h1>
+<h1 id="time">{{time}} Seconds</h1>
+<div id="colorBlock">
+</div>
+
+</body>
+</html>
